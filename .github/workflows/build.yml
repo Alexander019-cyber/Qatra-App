@@ -37,6 +37,7 @@ jobs:
         run: |
           mkdir project
           unzip -q "qatra---قطرة (1) a.zip" -d project
+          cp .env.example project/.env.example
           test -f project/settings.gradle.kts
 
       - name: Build APK
