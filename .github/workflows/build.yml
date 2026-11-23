@@ -1,0 +1,54 @@
+
+name: Build Qatra APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '*.zip'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platforms;android-36" \
+            "platforms;android-36-ext1" \
+            "build-tools;36.0.0"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
+
+      - name: Extract Qatra project
+        run: |
+          mkdir project
+          ARCHIVE=$(find . -maxdepth 1 -name '*.zip' -print -quit)
+          test -n "$ARCHIVE"
+          unzip -q "$ARCHIVE" -d project
+          test -f project/settings.gradle.kts
+
+      - name: Build APK
+        run: gradle -p project --no-daemon assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Qatra-APK
+          path: project/app/build/outputs/apk/debug/app-debug.apk
