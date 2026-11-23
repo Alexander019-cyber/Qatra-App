@@ -1,4 +1,3 @@
-
 name: Build Qatra APK
 
 on:
@@ -27,9 +26,7 @@ jobs:
 
       - name: Install Android SDK packages
         run: |
-          sdkmanager "platforms;android-36" \
-             "platforms;android-36.1" \
-            "build-tools;36.0.0"
+          sdkmanager "platforms;android-36" "platforms;android-36.1" "build-tools;36.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
@@ -39,9 +36,7 @@ jobs:
       - name: Extract Qatra project
         run: |
           mkdir project
-          ARCHIVE=$(find . -maxdepth 1 -name '*.zip' -print -quit)
-          test -n "$ARCHIVE"
-          unzip -q "$ARCHIVE" -d project
+          unzip -q "qatra---قطرة (1) a.zip" -d project
           test -f project/settings.gradle.kts
 
       - name: Build APK
